@@ -1,0 +1,225 @@
+import java.util.*;
+class edge
+{
+	int end;
+	int weight;
+	public edge(int end, int weight)
+	{
+		this.end=end;
+		this.weight = weight;
+	}
+}
+class Key
+{
+	int vertex;
+	int key;
+	public Key(int vertex, int key)
+	{
+		this.vertex=vertex;
+		this.key=key;
+	}
+}
+class graph
+{
+	ArrayList<Key> key=new ArrayList<Key>();
+	boolean[] visited = new boolean[10]; 
+	boolean[] added =new boolean[10];
+	LinkedList<Integer> a = new LinkedList<Integer>();
+	List<edge>[] adj;
+	Key sample= new Key(11,Integer.MAX_VALUE);
+	public graph()
+	{
+		adj = (List<edge>[]) new List[10];
+		
+		for(int i =0;i<10;i++)
+		{
+			//key.add(i,sample);
+			visited[i]=false;
+			adj[i]= new ArrayList<edge>();
+			added[i]=false;
+		}
+	}
+	public void addedge(int start, int end , int weight)
+	{
+		edge e= new edge(end,weight);
+		adj[start].add(e);
+		e= new edge(start,weight);
+		adj[end].add(e);
+	}
+	public void display()
+	{
+		int e;
+		for(int i =0;i<10;i++)
+		{
+			System.out.print(i);
+			Iterator<edge> iter = adj[i].iterator();
+			for(;iter.hasNext();)
+			{
+				e=iter.next().end;
+				System.out.print("->"+e);
+			}
+			System.out.println();
+		}
+	}
+	
+	public void heapify(int index)
+	{
+		int i=index;
+		int c=key.size()-1;
+		Key temp;
+		if(2*i+1>c)
+		{//if this node has only one child
+			
+			if(key.get(i).key>key.get(2*i).key)
+			{//check and swap
+				temp=key.get(i); 
+				key.set(i,key.get(2*i));
+				key.set(2*i,temp);
+				
+			}
+		}
+		else{
+			//if this node has two children find the bigger one 
+			int k;
+			if(key.get(2*i).key<key.get(2*i+1).key)
+			{
+				k=2*i;
+				temp=key.get(2*i);
+			}
+			else
+			{
+				k=2*i+1;
+				temp=key.get(2*i+1);
+			}
+			if(key.get(i).key>temp.key)
+			{//check and swap
+				key.set(k,key.get(i));
+				key.set(i,temp);
+			}
+		}	
+	}
+	public void prim(int root)
+	{
+		visited[root]=true;
+
+		a.add(root);
+		int w,e;
+		edge E;
+		Key K;
+		for(int j=0;j<adj[root].size();j++)
+		{
+			E=adj[root].get(j);
+			K= new Key(E.end,E.weight);
+			added[E.end]=true;
+			key.add(K);
+		}
+		key.add(0,sample);
+		int i = key.size()-1;
+		int index=(i)/2;
+		for(;index>=1;index--)
+		{
+			heapify(index); //check and swap in this node
+		    if(index*2<=i/2) //find whether this action violate heap-order property of child node
+		    {
+		    	heapify(index*2);
+		    }
+		    if(index*2+1<=i/2)
+		    {
+		    	heapify(index*2+1);
+		    }
+		}
+		while(key.size()!=1)
+		{
+			K=key.remove(1);
+			System.out.print(K.vertex);
+			a.add(K.vertex);
+			visited[K.vertex]=true;
+			
+			for(int j=0;j<adj[K.vertex].size();j++)
+			{
+				System.out.print("size"+adj[K.vertex].size());
+				System.out.print("vertex"+K.vertex);
+				E=adj[K.vertex].get(j);
+				System.out.print(E.end+""+added[E.end]);
+				if(!visited[E.end]&&!added[E.end])
+				{
+					Key K1= new Key(E.end,E.weight);
+					System.out.print("add one new key"+E.end);
+				    added[E.end]=true;
+				    key.add(K1);
+				}
+				if(!visited[E.end]&&added[E.end])
+				{
+				
+					for(int x=1;x<key.size();x++)
+					{ 
+						
+						Key k=key.get(x);
+						
+						if(k.vertex==E.end&&k.key>E.weight)
+						{
+							System.out.print(k.key);
+							k.key=E.weight;
+							key.set(x, k);
+							System.out.print("update"+key.get(x).vertex+""+key.get(x).key);
+						}
+					}
+				}
+				
+			} 
+			i = key.size()-1;
+		    index=(i)/2;
+		    for(;index>=1;index--)
+			{
+				heapify(index); //check and swap in this node
+			    if(index*2<=i/2) //find whether this action violate heap-order property of child node
+			    {
+			    	heapify(index*2);
+			    }
+			    if(index*2+1<=i/2)
+			    {
+			    	heapify(index*2+1);
+			    }
+			}
+		    System.out.println("after remove"+K.vertex);
+			for(int y=1;y<key.size();y++)
+			{
+				System.out.print(key.get(y).vertex+"("+key.get(y).key+")"+" ");
+			}
+			System.out.println();
+		}
+	}
+}
+public class Prim2 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		graph g=new graph();
+		g.addedge(0, 1,1);
+		g.addedge(0, 4, 2);
+		g.addedge(0,9,6);
+		g.addedge(1,4,4);
+		g.addedge(1,3,5);
+		g.addedge(3,6,7);
+		g.addedge(4,9,3);
+		g.addedge(4,7,5);
+		g.addedge(4,5,3);
+		g.addedge(5,1,9);
+		g.addedge(5,3,4);
+		g.addedge(5,6,5);
+		g.addedge(5,8,7);
+		g.addedge(5,7,6);
+		g.addedge(7,9,8);
+		g.addedge(8,7,9);
+		g.addedge(6,8,6);
+		g.addedge(3,2,8);
+		g.addedge(6, 2, 9);
+		g.display();
+		g.prim(8);
+		System.out.println();
+		System.out.print(g.a);
+		//0, 1, 4, 5, 9, 3, 7, 6, 8, 2
+	}
+
+}
