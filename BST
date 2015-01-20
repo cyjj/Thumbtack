@@ -1,0 +1,333 @@
+import java.util.*;
++import java.lang.Math;
++
++class Treenode // define the node
++{
++	int data;
++	Treenode left = null;
++	Treenode right = null;
++	public Treenode(int a)
++	{
++		this.data = a;
++	}
++	public int getdata()
++	{
++		return data;
++	}
++}
++
++class Tree
++{
++	Treenode root;
++	
++	public Treenode find(Treenode cur, int value) //find parent node of the node contains the value
++	{
++		while(cur != null)
++		{
++			if(cur.left.data == value||cur.right.data==value)
++				return cur;
++			else if(cur.data < value)
++			{
++				return find(cur.right, value);
++			}
++			else
++				return find(cur.left,value);
++		}
++		
++		return null;
++		
++	}
++	
++
++	public void find2(Treenode cur, int a)  //find the proper location to insert node
++	{
++		if(cur.data == a)
++			System.out.println("value exist");
++		else if (cur.data < a)
++		{
++			if (cur.right == null)
++			{
++				cur.right = new Treenode(a);
++			}
++			else
++			{
++				find2(cur.right, a);
++			}
++		}
++		else
++		{
++			if (cur.left == null)
++			{
++				cur.left = new Treenode(a);
++			}
++			else
++			{
++				find2(cur.left, a);
++			}
++		}
++
++	}
++	public Treenode FindMinRight(Treenode start )
++	{
++		Treenode t,t1=null;
++		
++		t=start.right;
++		while(t.left!=null)
++		{
++			t1=t;
++			t=t.left;
++		}
++		return t;
++	}
++	public int getHeight(Treenode node)
++	{
++		int height = 0;
++		
++		if(node == null)
++			return 0;
++		else
++		{
++			if(node.left != null || node.right != null)
++			{
++				height = Math.max(getHeight(node.left), getHeight(node.right)) + 1;
++			}
++			else
++				return height;
++		}
++		
++		return height;
++	}
++	
++	public void display2()
++	{
++		LinkedList<Treenode> nodeList = new LinkedList<Treenode>();
++		LinkedList<Treenode> tempList = new LinkedList<Treenode>();		
++		nodeList.add(root);
++		
++		int nodeNum = 1;
++		
++		int height = this.getHeight(root);
++		
++		while(height>= 0)
++		{
++			nodeNum = 0;
++			int i;
++			for( i = 0; i<(int)Math.pow(2.0, height) ; i++)  // format height * 3 + 2
++			{
++				System.out.print(" ");   //print the space at the beginning at every line
++			}
++			//System.out.print("space at beginning"+i);
++			
++			
++			for(Iterator<Treenode> iter = nodeList.iterator(); iter.hasNext();)	
++			{
++
++				Treenode next = iter.next();
++				int data = next.data;
++				if(data == -1)
++				{
++					int j;
++					System.out.print("");//represent null point
++					for( j = 0; j <(int)Math.pow(2.0, height+1); j++)  //format = height * 4 + 1
++					{
++						System.out.print(" ");
++					}
++					//System.out.print("space after null point"+j);
++					if(next.left != null)
++					{
++						nodeNum++;
++						tempList.add(next.left);
++					}
++					else
++						tempList.add(new Treenode(-1));
++					
++					if(next.right != null)
++					{
++						nodeNum++;
++						tempList.add(next.right);
++					}
++					else
++						tempList.add(new Treenode(-1));
++				}
++				else
++				{
++					System.out.print(data);
++					int k;
++					for(k = 0; k <(int)Math.pow(2.0, height+1); k++)  //format
++					{
++						System.out.print(" ");  
++					}
++					//System.out.print("space after valid point"+k);
++					if(next.left != null)
++					{
++						nodeNum++;
++						tempList.add(next.left);
++					}
++					else
++						tempList.add(new Treenode(-1));
++					
++					if(next.right != null)
++					{
++						nodeNum++;
++						tempList.add(next.right);
++					}
++					else
++						tempList.add(new Treenode(-1));
++				}
++			}
++			height --;
++			System.out.println();
++			
++			nodeList.clear();
++			
++			for(Iterator<Treenode> iter = tempList.iterator(); iter.hasNext();)
++			{
++				Treenode node = iter.next();
++				nodeList.add(node);
++			}
++			
++			tempList.clear();
++
++		}
++	}
++
++
++
++	public void insert(int a)
++	{
++		if(root == null)
++		{
++			System.out.println("add new root");
++			root = new Treenode(a);
++		}
++			
++//		if(find(root, a) != null)
++//			System.out.println("value exist");
++		else
++		{
++			find2(root,a);
++		}
++		
++	}
++	
++	
++	public void delete(int a)
++	{
++		Treenode pnode=find(this.root,a);
++		Treenode node;
++		int check=0;
++		if(pnode.left.data==a)
++		{
++			node=pnode.left;
++			check=1;
++		}
++		else
++		{
++			node=pnode.right;
++		    check=2;
++		}
++		if(node.right==null&&node.left==null)
++		{
++			if(check==1)
++			{
++				pnode.left=null;
++			}
++			else
++				pnode.right=null;
++		}
++		else if(node.right==null || node.left==null)
++		{
++			if(check==1)
++			{
++				if(node.right==null)
++					pnode.left=node.left;
++				else 
++					pnode.left=node.right;
++			}
++			else 
++			{
++				if(node.right==null)
++					pnode.right=node.left;
++				else 
++					pnode.right=node.right;			
++			}
++		}
++		else
++		{
++			Treenode t,t1=null;
++			t=node.right;
++			while(t.left!=null)
++			{
++				t1=t;
++				t=t.left;
++			}
++			if(t.right==null)
++			{
++				if(check==1)
++				{
++					pnode.left=t;
++					t.left=node.left;
++					t.right=node.right;
++					t1.left=null;
++				}
++				if(check==2)
++				{
++					pnode.right=t;
++					t.left=node.left;
++					t.right=node.right;
++					t1.left=null;
++				}
++			}
++			else 
++			{
++				if(check==1)
++				{
++					pnode.left=t;
++					t.left=node.left;
++					t.right=node.right;
++					t1.left=t.right;
++				}
++				if(check==2)
++				{
++					pnode.right=t;
++					t.left=node.left;
++					t.right=node.right;
++					t1.left=t.right;
++				}
++			}
++		}
++
++	}
++
++}
++
++public class BST
++{
++	public static void main(String[] args)
++	{
++		Tree t = new Tree();
++		t.insert(12);
++		t.insert(54);
++		t.insert(34);
++
++		t.insert(76);
++		t.insert(46);
++		t.insert(2);
++		t.insert(18);
++		t.insert(38);
++		t.insert(23);
++		t.insert(11);
++		t.insert(9);
++		t.insert(87);
++		t.insert(33);
++		t.insert(65);
++        System.out.println("before delete:");
++		t.display2();
++		
++		t.delete(54);
++		System.out.println("after delete:");
++		t.display2();
++		
++	}
++
++}
