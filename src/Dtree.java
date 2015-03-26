@@ -237,7 +237,7 @@ class node implements Cloneable{
 				{//no instances left use the most frequent one in entire set
 					datapoint.label[k]=tag;
 				}
-				if(e!=0.0&e!=(double)-1)
+				if(e!=0.0&&e!=(double)-1)
 				{//has impure instances left, use function
 					datapoint.label[k] = findtag(sub);
 				}
