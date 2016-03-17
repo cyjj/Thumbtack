@@ -207,6 +207,5 @@ public class Thumbdb {
                 //error in reading file
                 e.printStackTrace();
             }
-            sc.close();
     }
 }
